@@ -5,6 +5,9 @@ from flask import Flask, render_template, request
 from flask_login import LoginManager, current_user
 from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
+from flask_talisman import Talisman
+import mimetypes
+mimetypes.add_type('text/css', '.css')
 
 
 class SecurityFilter(logging.Filter):
@@ -27,6 +30,20 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///lottery.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'LongAndRandomSecretKey'
+
+# SECURITY HEADERS
+talisman = Talisman()
+csp = {
+    'default-src': [
+        '\'self\'',
+        'https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css'
+    ],
+    'script-src': [
+        '\'self\'',
+        '\'unsafe-inline\''
+    ]
+}
+talisman.init_app(app, content_security_policy=csp, x_content_type_options=False)
 
 # initialise database
 db = SQLAlchemy(app)

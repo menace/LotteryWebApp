@@ -1,4 +1,1 @@
-11/04/2021 01:11:22 AM : SECURITY - Log out [2, bob@email.com, 127.0.0.1]
-11/04/2021 01:11:24 AM : SECURITY - Invalid Log in attempt [None, 127.0.0.1]
-11/04/2021 01:11:37 AM : SECURITY - Log in [1, admin@email.com, 127.0.0.1]
-11/04/2021 01:12:10 AM : SECURITY - Unauthorised access attempt [1, admin@email.com, admin, 127.0.0.1]
+11/04/2021 02:37:09 PM : SECURITY - Invalid Log in attempt [None, 127.0.0.1]
