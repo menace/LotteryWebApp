@@ -34,3 +34,10 @@ class RegisterForm(FlaskForm):
         validators=[DataRequired("Password must match"), EqualTo("password", "Password must match.")])
     pin_key = StringField(validators=[DataRequired("Pin Key must be 32 characters in length"), Length(32, 32)])
     submit = SubmitField()
+
+
+class LoginForm(FlaskForm):
+    username = StringField(validators=[DataRequired(), Email()])
+    password = PasswordField(validators=[DataRequired()])
+    pin = StringField(validators=[DataRequired()])
+    submit = SubmitField()
