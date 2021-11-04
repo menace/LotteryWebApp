@@ -6,7 +6,7 @@ from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.security import check_password_hash
 from datetime import datetime
-from app import db
+from app import db, requires_roles
 from models import User
 from admin import views as adminViews
 from users.forms import RegisterForm, LoginForm
@@ -46,6 +46,8 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
+        logging.warning('SECURITY - User registration [%s, %s]', form.username.data, request.remote_addr)
+
         # sends user to login page
         return redirect(url_for('users.login'))
     # if request method is GET or form not valid re-render signup page
@@ -72,19 +74,23 @@ def login():
             db.session.add(user)
             db.session.commit()
 
+            logging.warning('SECURITY - Log in [%s, %s, %s]', current_user.id, current_user.email, request.remote_addr)
+
             if user.role == "admin":
-                return adminViews.admin()
-            return account()
+                return redirect(url_for('admin.admin'))
+            return redirect(url_for('users.account'))
 
         else:
             flash("You have supplied an invalid 2FA token!", "danger")
 
+    logging.warning('SECURITY - Invalid Log in attempt [%s, %s]', form.username.data, request.remote_addr)
     return render_template('login.html', form=form)
 
 
 @users_blueprint.route('/logout')
 @login_required
 def logout():
+    logging.warning('SECURITY - Log out [%s, %s, %s]', current_user.id, current_user.email, request.remote_addr)
     logout_user()
     return redirect(url_for('index'))
 
@@ -92,6 +98,7 @@ def logout():
 # view user profile
 @users_blueprint.route('/profile')
 @login_required
+@requires_roles('user')
 def profile():
     return render_template('profile.html', name=current_user.firstname)
 
